@@ -44,7 +44,7 @@ public class SneakEnchant implements ModInitializer {
         });
     }
 
-    private static void enchantHeld(ServerPlayerEntity p) {
+        private static void enchantHeld(ServerPlayerEntity p) {
         ItemStack stack = p.getMainHandStack();
         if (stack.isEmpty()) return;
 
@@ -53,7 +53,7 @@ public class SneakEnchant implements ModInitializer {
 
         List<Enchantment> valid = new ArrayList<>();
         for (Enchantment e : Registries.ENCHANTMENT) {
-            if (!e.isCursed() && e.isAcceptableItem(stack)) {
+            if (!e.isCursed() && e.isAcceptableItem(stack) && !map.containsKey(e)) {
                 valid.add(e);
             }
         }
@@ -68,5 +68,4 @@ public class SneakEnchant implements ModInitializer {
             map.put(e, rnd.nextInt(MIN_LEVEL, MAX_LEVEL + 1));
         }
         EnchantmentHelper.set(map, stack);
-    }
-}
+        }
