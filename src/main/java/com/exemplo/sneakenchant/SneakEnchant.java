@@ -17,12 +17,8 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SneakEnchant implements ModInitializer {
-    // Nível sorteado entre MIN e MAX (máximo possível na 1.20.1: 32767)
     private static final int MIN_LEVEL = 1;
     private static final int MAX_LEVEL = 1000;
-
-    // true = todos os encantamentos compatíveis, cada um com nível aleatório
-    // false = só UM encantamento aleatório por agachada
     private static final boolean ALL_ENCHANTS = true;
 
     private static final Set<UUID> sneaking = new HashSet<>();
@@ -44,7 +40,7 @@ public class SneakEnchant implements ModInitializer {
         });
     }
 
-        private static void enchantHeld(ServerPlayerEntity p) {
+    private static void enchantHeld(ServerPlayerEntity p) {
         ItemStack stack = p.getMainHandStack();
         if (stack.isEmpty()) return;
 
@@ -68,4 +64,5 @@ public class SneakEnchant implements ModInitializer {
             map.put(e, rnd.nextInt(MIN_LEVEL, MAX_LEVEL + 1));
         }
         EnchantmentHelper.set(map, stack);
-        }
+    }
+}
