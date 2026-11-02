@@ -1,17 +1,21 @@
 {
   "schemaVersion": 1,
   "id": "sneakenchant",
-  "version": "${version}",
+  "version": "1.0.0",
   "name": "Sneak Enchant",
-  "description": "Encanta o item da mao ao agachar.",
-  "authors": ["spwprime", "Claude"],
+  "description": "Agache para encantar o item da mao.",
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.exemplo.sneakenchant.SneakEnchant"]
+    "main": [
+      "com.exemplo.sneakenchant.SneakEnchant"
+    ]
   },
+  "mixins": [
+    "sneakenchant.mixins.json"
+  ],
   "depends": {
-    "fabricloader": ">=0.15.0",
+    "fabricloader": ">=0.14.0",
     "minecraft": "~1.20.1",
     "java": ">=17",
     "fabric-api": "*"
