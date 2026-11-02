@@ -17,26 +17,42 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SneakEnchant implements ModInitializer {
+    // Nível sorteado entre MIN e MAX (máximo possível na 1.20.1: 32767)
     private static final int MIN_LEVEL = 1;
     private static final int MAX_LEVEL = 1000;
+
+    // true = todos os encantamentos, cada um com nível aleatório
+    // false = só UM encantamento aleatório por agachada
     private static final boolean ALL_ENCHANTS = true;
+
+    // true = encanta qualquer item (inclusive blocos)
+    // false = só itens compatíveis com o encantamento
+    private static final boolean ANY_ITEM = true;
 
     private static final Set<UUID> sneaking = new HashSet<>();
 
     @Override
     public void onInitialize() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            Set<UUID> online = new HashSet<>();
+
             for (ServerPlayerEntity p : server.getPlayerManager().getPlayerList()) {
+                UUID id = p.getUuid();
+                online.add(id);
+
                 boolean now = p.isSneaking();
-                boolean was = sneaking.contains(p.getUuid());
+                boolean was = sneaking.contains(id);
 
                 if (now && !was) {
-                    sneaking.add(p.getUuid());
+                    sneaking.add(id);
                     enchantHeld(p);
                 } else if (!now && was) {
-                    sneaking.remove(p.getUuid());
+                    sneaking.remove(id);
                 }
             }
+
+            // Limpa jogadores que saíram do servidor
+            sneaking.retainAll(online);
         });
     }
 
@@ -49,9 +65,9 @@ public class SneakEnchant implements ModInitializer {
 
         List<Enchantment> valid = new ArrayList<>();
         for (Enchantment e : Registries.ENCHANTMENT) {
-            if (!e.isCursed() && e.isAcceptableItem(stack) && !map.containsKey(e)) {
-                valid.add(e);
-            }
+            if (e.isCursed() || map.containsKey(e)) continue;
+            if (!ANY_ITEM && !e.isAcceptableItem(stack)) continue;
+            valid.add(e);
         }
         if (valid.isEmpty()) return;
 
@@ -63,6 +79,8 @@ public class SneakEnchant implements ModInitializer {
             Enchantment e = valid.get(rnd.nextInt(valid.size()));
             map.put(e, rnd.nextInt(MIN_LEVEL, MAX_LEVEL + 1));
         }
+
         EnchantmentHelper.set(map, stack);
     }
 }
+
